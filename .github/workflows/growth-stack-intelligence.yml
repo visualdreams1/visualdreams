@@ -8,7 +8,7 @@ permissions:
 jobs:
   intelligence:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -16,9 +16,13 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Run research, multichannel intelligence, sales and monitoring
+      - name: Run research, discovery, multichannel intelligence, sales and monitoring
         env:
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          BRAVE_SEARCH_API_KEY: ${{ secrets.BRAVE_SEARCH_API_KEY }}
+          GOOGLE_CSE_API_KEY: ${{ secrets.GOOGLE_CSE_API_KEY }}
+          GOOGLE_CSE_ID: ${{ secrets.GOOGLE_CSE_ID }}
+          SERPER_API_KEY: ${{ secrets.SERPER_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL: gpt-5.6-luna
           OUTBOUND_ENABLED: ${{ secrets.OUTBOUND_ENABLED }}
@@ -28,6 +32,9 @@ jobs:
           MAX_MULTICHANNEL_LEADS: ${{ vars.MAX_MULTICHANNEL_LEADS }}
           MAX_LEADS_PER_RUN: ${{ vars.MAX_LEADS_PER_RUN }}
           MAX_FOLLOWUPS_PER_RUN: ${{ vars.MAX_FOLLOWUPS_PER_RUN }}
+          DISCOVERY_RESULTS_PER_QUERY: ${{ vars.DISCOVERY_RESULTS_PER_QUERY }}
+          DISCOVERY_MAX_PAGES_PER_QUERY: ${{ vars.DISCOVERY_MAX_PAGES_PER_QUERY }}
+          DISCOVERY_DELAY_SECONDS: ${{ vars.DISCOVERY_DELAY_SECONDS }}
         run: |
           python growth-stack-master/run_intelligence.py
           python growth-stack-master/followup_engine.py
