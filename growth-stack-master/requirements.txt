@@ -1,0 +1,2 @@
+# V0.1 intentionally uses only Python standard library.
+# Add model/provider SDKs here only when the provider is selected.
