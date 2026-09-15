@@ -1,34 +1,50 @@
-# Growth Stack Intelligence Layer
+# Growth Stack Intelligence + Business Acquisition Layer
 
-## Required GitHub Actions secrets
+## Search providers
 
-Add these repository secrets under GitHub Settings → Secrets and variables → Actions:
+Required:
+- `TAVILY_API_KEY` — live web research.
 
-- `TAVILY_API_KEY` — required for live web research.
-- `OPENAI_API_KEY` — optional for AI evidence synthesis and stronger reasoning.
+Optional additional discovery providers:
+- `BRAVE_SEARCH_API_KEY` — Brave Web Search + Brave Place Search.
+- `GOOGLE_CSE_API_KEY` + `GOOGLE_CSE_ID` — Google Programmable Search / Custom Search JSON API.
+- `SERPER_API_KEY` — Google-results API provider.
+- `OPENAI_API_KEY` — optional evidence synthesis/reasoning.
 
-The system still performs deterministic evidence scoring when `OPENAI_API_KEY` is absent.
+The pipeline merges whichever providers are configured. It does not claim to query literally every search engine; providers without a permitted API are not scraped or bypassed.
 
-## What happens every 6 hours
+## Business extraction pipeline
 
-1. Tavily searches the worldwide opportunity matrix.
-2. Existing opportunities are refreshed so changes can be detected.
-3. Evidence is normalized and independent sources are counted.
-4. The intelligence engine scores evidence quality and confidence.
-5. Optional GPT-5.6 Luna analysis reads the supplied evidence only.
-6. The engine detects NEW, NEW_EVIDENCE, STRENGTHENING, WEAKENING and STABLE signals.
-7. Opportunities are ranked into the decision queue.
-8. `DECISION_QUEUE.md`, `MONITORING_DASHBOARD.html` and machine-readable state are updated.
-9. GitHub commits the resulting research state.
+`SEARCH → MULTI-PROVIDER MERGE → INDIVIDUAL BUSINESS DISCOVERY → PUBLIC PAGE RESOLUTION → CONTACT EXTRACTION → CONTACT VERIFICATION → PRIMARY CHANNEL RANKING → DEDUPE → CRM → PERSONALIZED SALES QUEUE → FOLLOW-UP → REPLY CLASSIFICATION → METRICS`
 
-## Decision rule
+For public business pages the extractor looks for schema.org business data, public email, telephone, explicit WhatsApp links, public LinkedIn/social profiles and public contact pages. Every contact keeps its source URL and confidence. It never guesses a contact or bypasses login/CAPTCHA/access controls.
 
-High-scoring opportunities with adequate independent evidence become `APPROVAL_REQUIRED`, not automatic sales actions. The system never sends outreach, signs contracts, spends money, moves payments or publishes sensitive material without owner approval.
+## Technical controls
+
+- Research cursor rotates through the full 16,720-opportunity matrix instead of repeatedly scanning only the first batch.
+- `DISCOVERY_RESULTS_PER_QUERY` controls search result count.
+- `DISCOVERY_MAX_PAGES_PER_QUERY` controls public-page enrichment.
+- `DISCOVERY_DELAY_SECONDS` controls fetch pacing.
+- Contact verification ranks public channels and rejects malformed values.
+- `state/inbound_replies.jsonl` can receive provider webhook events; the outcome engine classifies STOP/BOUNCE/POSITIVE/NEGATIVE/QUESTION and suppresses future follow-ups where appropriate.
+- `state/sales_metrics.json` records lead, send, engagement and opt-out metrics.
+
+## Every 6 hours
+
+1. Research rotates to the next opportunity batch.
+2. Evidence is refreshed and scored.
+3. Configured search providers discover individual businesses.
+4. Public pages are resolved and contact channels extracted.
+5. Contacts are verified, deduplicated and ranked.
+6. CRM and follow-up plans are updated.
+7. Business-specific sales messages are prepared.
+8. Replies, opt-outs and metrics are processed.
+9. Dashboard/state files are committed.
+
+## Safety
+
+Outbound sending remains approval-gated. Even if a sender webhook is configured, the queue must contain `APPROVED_TO_SEND`, and the explicit outbound switch must be enabled. STOP/opt-out/bounce states suppress future follow-ups.
 
 ## Manual run
 
-Use GitHub Actions → Growth Stack Intelligence → Run workflow.
-
-## Cost control
-
-The scheduled job researches a bounded batch each run rather than attempting all combinations at once. The matrix is much larger than the per-run batch; subsequent runs refresh different/previously stored opportunities as the system evolves.
+Use GitHub Actions → **Growth Stack Intelligence** → **Run workflow**.
