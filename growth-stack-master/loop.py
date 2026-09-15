@@ -1,49 +1,44 @@
-"""Growth Stack Master execution loop.
-
-Usage:
-    python loop.py
-    python loop.py research
-    python loop.py dashboard
-
-This is the control loop, not an autonomous money-moving system. It can prepare work
-and research queues; consequential external actions remain approval-gated.
-"""
+"""Growth Stack Master execution loop."""
 from __future__ import annotations
 
+import importlib.util
 import json
 import sys
-from operator import mission_001, dashboard
-from research_loop import daily_loop
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+
+
+def load_operator():
+    spec = importlib.util.spec_from_file_location("growth_stack_operator", ROOT / "operator.py")
+    if spec is None or spec.loader is None:
+        raise RuntimeError("Cannot load local operator.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def run() -> None:
-    mission_001()
+    operator = load_operator()
+    from research_loop import daily_loop
+
+    operator.mission_001()
     command = sys.argv[1].lower() if len(sys.argv) > 1 else "cycle"
 
     if command == "research":
         print(json.dumps(daily_loop(), indent=2))
         return
-
     if command == "dashboard":
-        print(dashboard())
+        print(operator.dashboard())
         return
 
     print("GROWTH STACK MASTER — EXECUTION LOOP")
-    print("1. CHECK: load mission and pending approvals")
-    print("2. RESEARCH: scan the broad opportunity matrix")
-    print("3. SCORE: prioritize speed, demand, cost, demo-ability and recurring revenue")
-    print("4. PLAN: create the smallest sellable next action")
-    print("5. APPROVAL: stop for Dennis when an external/consequential action is required")
-    print("6. EXECUTE: perform only approved actions through connected tools")
-    print("7. MEASURE: revenue, leads, conversion, delivery and retention")
-    print("8. LEARN: record evidence and update priorities")
-    print("9. REPEAT: return to research and the highest-value next action")
-    print("\nRunning the initial research queue...")
+    print("CHECK → RESEARCH → SCORE → PLAN → APPROVAL → EXECUTE → MEASURE → LEARN → REPEAT")
     report = daily_loop()
     print(f"Research matrix: {report['queue_size']} opportunity combinations")
     print(f"Stored candidates: {report['stored_opportunities']}")
     print(f"Income channel: M-Pesa {report['income_number']}")
-    print("\nNEXT: connect a live research provider, then validate and rank the best opportunities.")
+    print("NEXT: run the scheduled live research workflow and review the monitoring dashboard.")
 
 
 if __name__ == "__main__":
