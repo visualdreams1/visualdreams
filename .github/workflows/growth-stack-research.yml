@@ -1,0 +1,38 @@
+name: Growth Stack Live Research
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run live research
+        env:
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          TAVILY_SEARCH_DEPTH: basic
+          RESEARCH_BATCH_SIZE: '40'
+        run: |
+          cd growth-stack-master
+          python run_live_research.py
+          python monitor.py
+          python dashboard.py
+      - name: Commit research state and dashboard
+        run: |
+          git config user.name 'growth-stack-master[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add growth-stack-master/state growth-stack-master/MONITORING_DASHBOARD.html
+          git diff --cached --quiet || git commit -m 'chore: refresh live research and monitoring'
+          git push
