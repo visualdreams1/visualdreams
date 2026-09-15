@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Run live research + intelligence + sales autopilot + monitoring
+      - name: Run research, multichannel intelligence, sales and monitoring
         env:
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -25,11 +25,16 @@ jobs:
           SALES_SENDER_WEBHOOK: ${{ secrets.SALES_SENDER_WEBHOOK }}
           MAX_SALES_SENDS_PER_RUN: ${{ vars.MAX_SALES_SENDS_PER_RUN }}
           SALES_SEND_DELAY_SECONDS: ${{ vars.SALES_SEND_DELAY_SECONDS }}
-        run: python growth-stack-master/run_intelligence.py
+          MAX_MULTICHANNEL_LEADS: ${{ vars.MAX_MULTICHANNEL_LEADS }}
+          MAX_LEADS_PER_RUN: ${{ vars.MAX_LEADS_PER_RUN }}
+          MAX_FOLLOWUPS_PER_RUN: ${{ vars.MAX_FOLLOWUPS_PER_RUN }}
+        run: |
+          python growth-stack-master/run_intelligence.py
+          python growth-stack-master/followup_engine.py
       - name: Commit intelligence state
         run: |
           git config user.name "growth-stack-intelligence"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add growth-stack-master/state growth-stack-master/DECISION_QUEUE.md growth-stack-master/MONITORING_DASHBOARD.html
-          git diff --cached --quiet || git commit -m "Update Growth Stack intelligence and sales state"
+          git diff --cached --quiet || git commit -m "Update Growth Stack autonomous intelligence state"
           git push
