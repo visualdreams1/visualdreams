@@ -25,10 +25,12 @@ def score(item):
 def normalize_research(raw):
  r=dict(raw); r.setdefault("evidence",[]); r.setdefault("demand_signal","UNKNOWN"); r.setdefault("competition","UNKNOWN"); r.setdefault("startup_cost","UNKNOWN"); r.setdefault("recurring_revenue","UNKNOWN"); r.setdefault("ease_of_demo","UNKNOWN"); r.setdefault("customer_access","UNKNOWN"); r.setdefault("recommended_offer",""); r["score"]=score(r); r["researched_at"]=now(); return r
 def run_research(provider:Callable[[dict[str,str]],dict[str,Any]]|None=None,limit:int|None=None):
- queue=build_research_queue(); queue=queue[:limit] if limit is not None else queue; existing=load_opportunities(); seen={(x.get("market"),x.get("sector"),x.get("type")) for x in existing}
+ queue=build_research_queue(); queue=queue[:limit] if limit is not None else queue; existing=load_opportunities(); index={(x.get("market"),x.get("sector"),x.get("type")):i for i,x in enumerate(existing)}
  for q in queue:
-  if (q["market"],q["sector"],q["type"]) in seen: continue
-  existing.append(normalize_research(provider(q) if provider else q))
+  key=(q["market"],q["sector"],q["type"])
+  item=normalize_research(provider(q) if provider else q)
+  if key in index and provider: existing[index[key]]=item
+  elif key not in index: index[key]=len(existing); existing.append(item)
  existing.sort(key=lambda x:x.get("score",0),reverse=True); save_opportunities(existing); return existing
 def top_opportunities(n=20): return load_opportunities()[:n]
 def daily_loop(provider=None,limit=None):
