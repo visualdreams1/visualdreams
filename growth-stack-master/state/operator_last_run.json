@@ -1,7 +1,8 @@
 {
   "operator": "GROWTH_STACK_AUTONOMOUS_REVENUE_OPERATOR",
-  "version": "1.1",
+  "version": "2.0-agent-team",
   "mission": "discover customers, create value, acquire customers, serve them and convert confirmed payments into fulfillment",
+  "million_target_kes": 1000000,
   "autonomy": "bounded",
   "approval_gates": "ENFORCED",
   "external_outreach_enabled": false,
@@ -9,16 +10,20 @@
   "cycles": [
     {
       "cycle": 1,
-      "started_at": "2026-09-16T08:00:21.071584+00:00",
-      "finished_at": "2026-09-16T08:00:21.079772+00:00",
+      "started_at": "2026-09-16T08:00:30.658641+00:00",
+      "finished_at": "2026-09-16T08:00:30.666973+00:00",
       "health": null,
+      "agent_team": {
+        "agents": 13,
+        "target_kes": 1000000
+      },
       "research": {
         "opportunities": 0,
         "error": "RuntimeError: TAVILY_API_KEY is not configured"
       },
       "intelligence": {
         "status": "HEALTHY",
-        "last_run": "2026-09-16T08:00:21.077219+00:00",
+        "last_run": "2026-09-16T08:00:30.663978+00:00",
         "items_analysed": 0,
         "approval_candidates": 0,
         "new_or_changed": 0,
@@ -42,6 +47,9 @@
         "leads": 0,
         "sales_queue": 0
       },
+      "offers": {
+        "generated": 0
+      },
       "outcomes": {
         "processed": 0,
         "skipped_duplicates": 0
@@ -61,7 +69,7 @@
         "orders": 0,
         "paid": 0,
         "payment_failed": 0,
-        "updated_at": "2026-09-16T08:00:21.078592+00:00"
+        "updated_at": "2026-09-16T08:00:30.665638+00:00"
       },
       "revenue": {
         "actions_added": 0,
@@ -73,11 +81,11 @@
         "engaged": 0,
         "opt_outs": 0,
         "reply_rate": 0,
-        "updated_at": "2026-09-16T08:00:21.078952+00:00"
+        "updated_at": "2026-09-16T08:00:30.666074+00:00"
       },
       "adaptive": {
         "status": "ADAPTIVE_POLICY_UPDATED",
-        "cycles": 2,
+        "cycles": 3,
         "weights": {
           "reply": 1.0,
           "positive": 2.5,
@@ -88,7 +96,7 @@
         }
       },
       "monitor": {
-        "timestamp": "2026-09-16T08:00:21.079486+00:00",
+        "timestamp": "2026-09-16T08:00:30.666685+00:00",
         "status": "HEALTHY",
         "errors": [],
         "warnings": [
@@ -104,5 +112,5 @@
       }
     }
   ],
-  "finished_at": "2026-09-16T08:00:21.079789+00:00"
+  "finished_at": "2026-09-16T08:00:30.667016+00:00"
 }
