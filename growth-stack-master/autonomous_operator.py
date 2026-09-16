@@ -24,6 +24,8 @@ from payment_engine import reconcile as reconcile_payments
 from revenue_loop import run as revenue_loop
 from adaptive_strategy import run as adaptive_run
 from monitor import check
+from agent_team import main as build_agent_team
+from offer_engine import run as build_offers
 
 ROOT = Path(__file__).resolve().parent
 STATE = ROOT / "state"
@@ -47,6 +49,7 @@ def cycle(index):
     """Run one closed-loop business cycle without letting one provider block all subsystems."""
     started = now()
     health = health_main()
+    team = build_agent_team()
 
     research_error = None
     try:
@@ -65,6 +68,7 @@ def cycle(index):
 
     multi = multichannel(verified)
     leads = acquire_leads(verified)
+    offers = build_offers(verified)
 
     outcomes = process_replies()
     responses = draft_responses()
@@ -81,12 +85,14 @@ def cycle(index):
         "started_at": started,
         "finished_at": now(),
         "health": health,
+        "agent_team": {"agents": len(team.get("team", [])), "target_kes": team.get("target_kes")},
         "research": {"opportunities": len(opportunities), "error": research_error},
         "intelligence": intelligence,
         "discovery": {"businesses": len(discovered)},
         "verification": {"leads": len(verified), "with_contacts": sum(bool(x.get("channels")) for x in verified)},
         "multichannel": multi,
         "lead_acquisition": leads,
+        "offers": {"generated": offers.get("count", 0)},
         "outcomes": outcomes,
         "responses": responses,
         "sales": sales,
@@ -107,8 +113,9 @@ def main():
 
     report = {
         "operator": "GROWTH_STACK_AUTONOMOUS_REVENUE_OPERATOR",
-        "version": "1.1",
+        "version": "2.0-agent-team",
         "mission": "discover customers, create value, acquire customers, serve them and convert confirmed payments into fulfillment",
+        "million_target_kes": int(os.getenv("MILLION_TARGET_KES", "1000000")),
         "autonomy": "bounded",
         "approval_gates": "ENFORCED",
         "external_outreach_enabled": os.getenv("OUTBOUND_ENABLED", "false").lower() == "true",
