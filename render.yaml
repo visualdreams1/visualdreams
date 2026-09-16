@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: growth-stack-whatsapp-webhook
+    runtime: python
+    rootDir: growth-stack-master
+    buildCommand: "python --version"
+    startCommand: "python whatsapp_webhook.py"
+    healthCheckPath: /health
+    envVars:
+      - key: WHATSAPP_WEBHOOK_VERIFY_TOKEN
+        sync: false
+      - key: WHATSAPP_APP_SECRET
+        sync: false
