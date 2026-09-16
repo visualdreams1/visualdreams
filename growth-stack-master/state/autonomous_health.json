@@ -1,0 +1,17 @@
+{
+  "research_ready": false,
+  "providers": {
+    "tavily": false,
+    "brave": false,
+    "google_cse": false,
+    "serper": false,
+    "openai": false
+  },
+  "multi_provider_search": false,
+  "ai_synthesis_ready": false,
+  "outbound_configured": false,
+  "outbound_enabled": false,
+  "sender_webhook_present": false,
+  "safe_default": true,
+  "status": "BLOCKED_MISSING_SEARCH_PROVIDER"
+}

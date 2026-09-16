@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-09-16T07:51:04.150916+00:00",
+  "status": "HEALTHY",
+  "errors": [],
+  "warnings": [
+    "Research store not created yet",
+    "Decision queue is empty"
+  ],
+  "checks": {
+    "state_directory": true,
+    "research_store": false,
+    "decision_queue": true,
+    "intelligence_health": true
+  }
+}

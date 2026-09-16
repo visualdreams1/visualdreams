@@ -1,0 +1,108 @@
+{
+  "operator": "GROWTH_STACK_AUTONOMOUS_REVENUE_OPERATOR",
+  "version": "1.1",
+  "mission": "discover customers, create value, acquire customers, serve them and convert confirmed payments into fulfillment",
+  "autonomy": "bounded",
+  "approval_gates": "ENFORCED",
+  "external_outreach_enabled": false,
+  "payment_provider_connected": false,
+  "cycles": [
+    {
+      "cycle": 1,
+      "started_at": "2026-09-16T07:51:04.144037+00:00",
+      "finished_at": "2026-09-16T07:51:04.151129+00:00",
+      "health": null,
+      "research": {
+        "opportunities": 0,
+        "error": "RuntimeError: TAVILY_API_KEY is not configured"
+      },
+      "intelligence": {
+        "status": "HEALTHY",
+        "last_run": "2026-09-16T07:51:04.149032+00:00",
+        "items_analysed": 0,
+        "approval_candidates": 0,
+        "new_or_changed": 0,
+        "ai_enabled": false
+      },
+      "discovery": {
+        "businesses": 0
+      },
+      "verification": {
+        "leads": 0,
+        "with_contacts": 0
+      },
+      "multichannel": {
+        "status": "MULTICHANNEL_INTELLIGENCE_COMPLETE",
+        "leads_processed": 0,
+        "crm_leads": 0,
+        "followups": 0
+      },
+      "lead_acquisition": {
+        "status": "LEAD_ACQUISITION_COMPLETE",
+        "leads": 0,
+        "sales_queue": 0
+      },
+      "outcomes": {
+        "processed": 0,
+        "skipped_duplicates": 0
+      },
+      "responses": {
+        "drafts_added": 0,
+        "queue": 0
+      },
+      "sales": {
+        "outbound_enabled": false,
+        "whatsapp_configured": false,
+        "queued": 0,
+        "attempted_this_run": 0,
+        "accepted_this_run": 0
+      },
+      "payments": {
+        "orders": 0,
+        "paid": 0,
+        "payment_failed": 0,
+        "updated_at": "2026-09-16T07:51:04.150186+00:00"
+      },
+      "revenue": {
+        "actions_added": 0,
+        "queue": 0
+      },
+      "sales_metrics": {
+        "leads": 0,
+        "sent": 0,
+        "engaged": 0,
+        "opt_outs": 0,
+        "reply_rate": 0,
+        "updated_at": "2026-09-16T07:51:04.150475+00:00"
+      },
+      "adaptive": {
+        "status": "ADAPTIVE_POLICY_UPDATED",
+        "cycles": 1,
+        "weights": {
+          "reply": 1.0,
+          "positive": 2.5,
+          "paid": 5.0,
+          "repeat": 7.0,
+          "bounce": -2.0,
+          "negative": -1.5
+        }
+      },
+      "monitor": {
+        "timestamp": "2026-09-16T07:51:04.150916+00:00",
+        "status": "HEALTHY",
+        "errors": [],
+        "warnings": [
+          "Research store not created yet",
+          "Decision queue is empty"
+        ],
+        "checks": {
+          "state_directory": true,
+          "research_store": false,
+          "decision_queue": true,
+          "intelligence_health": true
+        }
+      }
+    }
+  ],
+  "finished_at": "2026-09-16T07:51:04.151144+00:00"
+}

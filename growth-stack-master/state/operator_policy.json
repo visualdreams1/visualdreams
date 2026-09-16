@@ -1,0 +1,23 @@
+{
+  "max_send_per_run": 10,
+  "max_leads_per_run": 50,
+  "max_followups_per_run": 20,
+  "approval_required_for": [
+    "external_outreach",
+    "payment_request",
+    "refund",
+    "money_movement",
+    "contract",
+    "legal_commitment",
+    "sensitive_publication"
+  ],
+  "weights": {
+    "reply": 1.0,
+    "positive": 2.5,
+    "paid": 5.0,
+    "repeat": 7.0,
+    "bounce": -2.0,
+    "negative": -1.5
+  },
+  "updated_at": "2026-09-16T07:51:04.150629+00:00"
+}

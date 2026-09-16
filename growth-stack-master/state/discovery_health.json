@@ -1,0 +1,7 @@
+{
+  "businesses_discovered": 0,
+  "pages_fetched": 0,
+  "providers_enabled": [
+    "tavily"
+  ]
+}
