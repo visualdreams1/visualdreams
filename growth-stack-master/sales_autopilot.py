@@ -5,7 +5,7 @@ External sending stays disabled unless a legitimate sender webhook and the
 explicit outbound switch are configured. STOP/opt-out handling is preserved.
 """
 from __future__ import annotations
-import json, os, time, urllib.request
+import hashlib, json, os, time, urllib.error, urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -13,6 +13,8 @@ ROOT=Path(__file__).resolve().parent; STATE=ROOT/"state"; STATE.mkdir(exist_ok=T
 QUEUE=STATE/"sales_queue.json"; LOG=STATE/"sales_activity.jsonl"; CRM=STATE/"lead_crm.json"
 MAX_SENDS_PER_RUN=int(os.getenv("MAX_SALES_SENDS_PER_RUN","10")); MIN_SCORE=float(os.getenv("SALES_MIN_SCORE","70"))
 OUTBOUND_ENABLED=os.getenv("OUTBOUND_ENABLED","0").lower() in {"1","true","yes"}; SENDER_WEBHOOK=os.getenv("SALES_SENDER_WEBHOOK","")
+RETRIES=int(os.getenv("SALES_SEND_RETRIES","3")); RETRY_DELAY=float(os.getenv("SALES_RETRY_DELAY_SECONDS","3"))
+
 
 def now():return datetime.now(timezone.utc).isoformat()
 def load(path,default):return json.loads(path.read_text(encoding="utf-8")) if path.exists() else default
@@ -41,29 +43,43 @@ def build_sales_queue(limit=100):
         key=lead.get("lead_key")
         if not key or key in seen or not lead.get("channels"):continue
         c=best_channel(lead)
-        existing.append({"lead_key":key,"business_name":lead.get("business_name"),"market":lead.get("market"),"sector":lead.get("sector"),"opportunity_type":lead.get("opportunity_type"),"score":lead.get("score",0),"confidence":lead.get("confidence",0),"contact":c,"message":make_message(lead),"status":"READY_FOR_APPROVAL","created_at":now()})
+        existing.append({"lead_key":key,"business_name":lead.get("business_name"),"market":lead.get("market"),"sector":lead.get("sector"),"opportunity_type":lead.get("opportunity_type"),"score":lead.get("score",0),"confidence":lead.get("confidence",0),"contact":c,"channels":lead.get("channels",[]),"message":make_message(lead),"status":"READY_FOR_APPROVAL","created_at":now()})
         seen.add(key);created+=1
         if created>=limit:break
     save(QUEUE,existing);return existing
 
-def send_webhook(payload):
-    req=urllib.request.Request(SENDER_WEBHOOK,data=json.dumps(payload).encode("utf-8"),headers={"Content-Type":"application/json"},method="POST")
+def send_webhook(payload, idem_key):
+    req=urllib.request.Request(SENDER_WEBHOOK,data=json.dumps(payload).encode("utf-8"),headers={"Content-Type":"application/json","Idempotency-Key":idem_key,"X-Growth-Stack-Campaign":"growth-stack-sales"},method="POST")
     with urllib.request.urlopen(req,timeout=20) as response:return response.status
 
 def execute(max_sends=MAX_SENDS_PER_RUN):
-    queue=load(QUEUE,[]);sent=0
+    queue=load(QUEUE,[]);crm=load(CRM,{});sent=0;accepted=0
     for item in queue:
         if sent>=max_sends:break
         if item.get("status")!="APPROVED_TO_SEND":continue
+        lead=crm.get(item.get("lead_key"),{})
+        if lead.get("status") in {"DO_NOT_CONTACT","SUPPRESSED"} or lead.get("reply_state") in {"STOP","NEGATIVE","BOUNCE"}:
+            item["status"]="SUPPRESSED";continue
         if not OUTBOUND_ENABLED or not SENDER_WEBHOOK:
-            item["status"]="APPROVAL_REQUIRED";continue
-        try:
-            status=send_webhook({"campaign":"growth-stack-sales","lead_key":item["lead_key"],"business_name":item.get("business_name"),"contact":item.get("contact"),"message":item.get("message"),"market":item.get("market"),"sector":item.get("sector")})
-            item["status"]="SENT" if 200<=status<300 else "SEND_FAILED";item["sent_at"]=now();sent+=1
-        except Exception as exc:item["status"]="SEND_FAILED";item["error"]=str(exc)[:300]
-        with LOG.open("a",encoding="utf-8") as f:f.write(json.dumps({"at":now(),"status":item["status"],"lead_key":item["lead_key"],"channel":(item.get("contact") or {}).get("channel")})+"\n")
+            item["status"]="BLOCKED_OUTBOUND";continue
+        idem=hashlib.sha256(f"{item['lead_key']}|{item.get('contact',{}).get('value')}|{item.get('message')}".encode()).hexdigest()
+        if item.get("idempotency_key")==idem and item.get("status")=="SENT":continue
+        payload={"campaign":"growth-stack-sales","lead_key":item["lead_key"],"business_name":item.get("business_name"),"contact":item.get("contact"),"message":item.get("message"),"market":item.get("market"),"sector":item.get("sector")}
+        last_error=""
+        for attempt in range(1,RETRIES+1):
+            try:
+                status=send_webhook(payload,idem)
+                if 200<=status<300:
+                    item["status"]="SENT";item["send_accepted_at"]=now();item["sent_at"]=item.get("sent_at") or item["send_accepted_at"];item["idempotency_key"]=idem;item["send_attempts"]=attempt;accepted+=1;break
+                last_error=f"HTTP {status}"
+            except (urllib.error.URLError,TimeoutError,Exception) as exc:last_error=str(exc)[:300]
+            if attempt<RETRIES:time.sleep(RETRY_DELAY*attempt)
+        else:
+            item["status"]="SEND_FAILED";item["error"]=last_error;item["send_attempts"]=RETRIES
+        sent+=1
+        with LOG.open("a",encoding="utf-8") as f:f.write(json.dumps({"at":now(),"status":item["status"],"lead_key":item["lead_key"],"channel":(item.get("contact") or {}).get("channel"),"attempts":item.get("send_attempts",0)})+"\n")
         time.sleep(float(os.getenv("SALES_SEND_DELAY_SECONDS","8")))
-    save(QUEUE,queue);return {"outbound_enabled":OUTBOUND_ENABLED,"queued":len(queue),"sent_this_run":sent}
+    save(QUEUE,queue);return {"outbound_enabled":OUTBOUND_ENABLED,"queued":len(queue),"attempted_this_run":sent,"accepted_this_run":accepted}
 
 def autopilot():build_sales_queue();return execute()
 if __name__=="__main__":print(json.dumps(autopilot(),indent=2))
