@@ -1,10 +1,10 @@
 """Production-ready Meta WhatsApp webhook receiver.
 
-Deploy as a public HTTPS web service. It handles Meta verification, validates
-X-Hub-Signature-256, exposes /health for hosting checks, and records inbound
-text events for the Growth Stack outcome engine.
+The service can start before production secrets are configured so hosting and
+health checks work. Webhook verification and signed POST processing remain
+blocked until the required secrets exist.
 
-Required environment variables:
+Required environment variables for Meta webhook operation:
   WHATSAPP_WEBHOOK_VERIFY_TOKEN
   WHATSAPP_APP_SECRET
 """
@@ -22,15 +22,14 @@ ROOT = Path(__file__).resolve().parent
 STATE = ROOT / "state"
 STATE.mkdir(exist_ok=True)
 INBOUND = STATE / "inbound_replies.jsonl"
-VERIFY_TOKEN = os.getenv("WHATSAPP_WEBHOOK_VERIFY_TOKEN", "")
-APP_SECRET = os.getenv("WHATSAPP_APP_SECRET", "")
 
 
 def valid_signature(body: bytes, signature: str) -> bool:
-    if not APP_SECRET or not signature.startswith("sha256="):
+    app_secret = os.getenv("WHATSAPP_APP_SECRET", "")
+    if not app_secret or not signature.startswith("sha256="):
         return False
     expected = "sha256=" + hmac.new(
-        APP_SECRET.encode(), body, hashlib.sha256
+        app_secret.encode(), body, hashlib.sha256
     ).hexdigest()
     return hmac.compare_digest(expected, signature)
 
@@ -57,10 +56,10 @@ def extract_events(payload: dict) -> list[dict]:
 
 
 class Handler(BaseHTTPRequestHandler):
-    def send_text(self, code: int, text: str):
+    def send_text(self, code: int, text: str, content_type: str = "text/plain; charset=utf-8"):
         data = text.encode()
         self.send_response(code)
-        self.send_header("Content-Type", "text/plain; charset=utf-8")
+        self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(data)))
         self.end_headers()
         self.wfile.write(data)
@@ -68,15 +67,23 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         parsed = urlparse(self.path)
         if parsed.path == "/health":
-            self.send_text(200, "OK")
+            configured = bool(os.getenv("WHATSAPP_WEBHOOK_VERIFY_TOKEN")) and bool(
+                os.getenv("WHATSAPP_APP_SECRET")
+            )
+            self.send_text(
+                200,
+                json.dumps({"status": "ok", "whatsapp_webhook_configured": configured}),
+                "application/json",
+            )
             return
 
         q = parse_qs(parsed.query)
+        verify_token = os.getenv("WHATSAPP_WEBHOOK_VERIFY_TOKEN", "")
         if (
             parsed.path in {"/", "/webhook"}
             and q.get("hub.mode", [""])[0] == "subscribe"
-            and q.get("hub.verify_token", [""])[0] == VERIFY_TOKEN
-            and VERIFY_TOKEN
+            and q.get("hub.verify_token", [""])[0] == verify_token
+            and verify_token
         ):
             self.send_text(200, q.get("hub.challenge", [""])[0])
             return
@@ -130,10 +137,6 @@ class Handler(BaseHTTPRequestHandler):
 
 def main():
     port = int(os.getenv("PORT", "10000"))
-    if not VERIFY_TOKEN or not APP_SECRET:
-        raise SystemExit(
-            "Set WHATSAPP_WEBHOOK_VERIFY_TOKEN and WHATSAPP_APP_SECRET"
-        )
     HTTPServer(("0.0.0.0", port), Handler).serve_forever()
 
 
