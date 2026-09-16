@@ -1,13 +1,16 @@
 """Growth Stack sales autopilot.
 
 Builds business-specific outreach from qualified public-contact records.
-External sending stays disabled unless a legitimate sender webhook and the
-explicit outbound switch are configured. STOP/opt-out handling is preserved.
+External sending stays disabled unless the explicit outbound switch and a
+legitimate sender are configured. STOP/opt-out handling is preserved.
+WhatsApp can use the official Meta Cloud API directly; other channels can use
+the existing sender webhook.
 """
 from __future__ import annotations
 import hashlib, json, os, time, urllib.error, urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
+from whatsapp_cloud import send as whatsapp_send, configured as whatsapp_configured
 
 ROOT=Path(__file__).resolve().parent; STATE=ROOT/"state"; STATE.mkdir(exist_ok=True)
 QUEUE=STATE/"sales_queue.json"; LOG=STATE/"sales_activity.jsonl"; CRM=STATE/"lead_crm.json"
@@ -52,6 +55,18 @@ def send_webhook(payload, idem_key):
     req=urllib.request.Request(SENDER_WEBHOOK,data=json.dumps(payload).encode("utf-8"),headers={"Content-Type":"application/json","Idempotency-Key":idem_key,"X-Growth-Stack-Campaign":"growth-stack-sales"},method="POST")
     with urllib.request.urlopen(req,timeout=20) as response:return response.status
 
+def send_item(item, idem):
+    channel=(item.get("contact") or {}).get("channel")
+    value=str((item.get("contact") or {}).get("value") or "")
+    if channel=="whatsapp" and whatsapp_configured():
+        params=[item.get("business_name") or "business"]
+        return whatsapp_send(value,item.get("message", ""),params)
+    if SENDER_WEBHOOK:
+        payload={"campaign":"growth-stack-sales","lead_key":item["lead_key"],"business_name":item.get("business_name"),"contact":item.get("contact"),"message":item.get("message"),"market":item.get("market"),"sector":item.get("sector")}
+        status=send_webhook(payload,idem)
+        return {"ok":200<=status<300,"status":status,"body":{}}
+    return {"ok":False,"status":0,"body":"No sender configured for selected channel"}
+
 def execute(max_sends=MAX_SENDS_PER_RUN):
     queue=load(QUEUE,[]);crm=load(CRM,{});sent=0;accepted=0
     for item in queue:
@@ -60,18 +75,17 @@ def execute(max_sends=MAX_SENDS_PER_RUN):
         lead=crm.get(item.get("lead_key"),{})
         if lead.get("status") in {"DO_NOT_CONTACT","SUPPRESSED"} or lead.get("reply_state") in {"STOP","NEGATIVE","BOUNCE"}:
             item["status"]="SUPPRESSED";continue
-        if not OUTBOUND_ENABLED or not SENDER_WEBHOOK:
+        if not OUTBOUND_ENABLED:
             item["status"]="BLOCKED_OUTBOUND";continue
         idem=hashlib.sha256(f"{item['lead_key']}|{item.get('contact',{}).get('value')}|{item.get('message')}".encode()).hexdigest()
         if item.get("idempotency_key")==idem and item.get("status")=="SENT":continue
-        payload={"campaign":"growth-stack-sales","lead_key":item["lead_key"],"business_name":item.get("business_name"),"contact":item.get("contact"),"message":item.get("message"),"market":item.get("market"),"sector":item.get("sector")}
         last_error=""
         for attempt in range(1,RETRIES+1):
             try:
-                status=send_webhook(payload,idem)
-                if 200<=status<300:
+                result=send_item(item,idem)
+                if result.get("ok"):
                     item["status"]="SENT";item["send_accepted_at"]=now();item["sent_at"]=item.get("sent_at") or item["send_accepted_at"];item["idempotency_key"]=idem;item["send_attempts"]=attempt;accepted+=1;break
-                last_error=f"HTTP {status}"
+                last_error=f"HTTP {result.get('status',0)}: {str(result.get('body',''))[:300]}"
             except (urllib.error.URLError,TimeoutError,Exception) as exc:last_error=str(exc)[:300]
             if attempt<RETRIES:time.sleep(RETRY_DELAY*attempt)
         else:
@@ -79,7 +93,7 @@ def execute(max_sends=MAX_SENDS_PER_RUN):
         sent+=1
         with LOG.open("a",encoding="utf-8") as f:f.write(json.dumps({"at":now(),"status":item["status"],"lead_key":item["lead_key"],"channel":(item.get("contact") or {}).get("channel"),"attempts":item.get("send_attempts",0)})+"\n")
         time.sleep(float(os.getenv("SALES_SEND_DELAY_SECONDS","8")))
-    save(QUEUE,queue);return {"outbound_enabled":OUTBOUND_ENABLED,"queued":len(queue),"attempted_this_run":sent,"accepted_this_run":accepted}
+    save(QUEUE,queue);return {"outbound_enabled":OUTBOUND_ENABLED,"whatsapp_configured":whatsapp_configured(),"queued":len(queue),"attempted_this_run":sent,"accepted_this_run":accepted}
 
 def autopilot():build_sales_queue();return execute()
 if __name__=="__main__":print(json.dumps(autopilot(),indent=2))
