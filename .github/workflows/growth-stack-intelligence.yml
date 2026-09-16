@@ -16,6 +16,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Validate Python
+        run: python -m compileall -q growth-stack-master
       - name: Run research, discovery, multichannel intelligence, sales and monitoring
         env:
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
