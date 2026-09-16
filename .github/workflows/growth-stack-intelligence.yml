@@ -1,6 +1,8 @@
 name: Growth Stack Intelligence
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
   schedule:
     - cron: '17 */6 * * *'
 permissions:
@@ -35,6 +37,8 @@ jobs:
           WHATSAPP_TEMPLATE_NAME: ${{ vars.WHATSAPP_TEMPLATE_NAME }}
           WHATSAPP_TEMPLATE_LANGUAGE: ${{ vars.WHATSAPP_TEMPLATE_LANGUAGE }}
           WHATSAPP_ALLOW_FREEFORM: ${{ vars.WHATSAPP_ALLOW_FREEFORM }}
+          WHATSAPP_APP_SECRET: ${{ secrets.WHATSAPP_APP_SECRET }}
+          WHATSAPP_WEBHOOK_VERIFY_TOKEN: ${{ secrets.WHATSAPP_WEBHOOK_VERIFY_TOKEN }}
           MPESA_DARAJA_BASE_URL: ${{ secrets.MPESA_DARAJA_BASE_URL }}
           MPESA_CONSUMER_KEY: ${{ secrets.MPESA_CONSUMER_KEY }}
           MPESA_CONSUMER_SECRET: ${{ secrets.MPESA_CONSUMER_SECRET }}
