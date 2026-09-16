@@ -1,8 +1,9 @@
 """Growth Stack Global autonomous revenue operator.
 
-This is the control plane: it coordinates discovery, intelligence, sales,
-customer-response, payment reconciliation, fulfillment readiness and bounded
-learning. Consequential actions remain behind explicit approval/provider gates.
+Control plane for discovery, intelligence, sales, customer-response, payment
+reconciliation, fulfillment readiness and bounded learning. External actions
+remain provider-gated and every provider failure is recorded rather than
+crashing the whole operating cycle.
 """
 from __future__ import annotations
 import json, os, time
@@ -43,28 +44,32 @@ def save_run(report):
 
 
 def cycle(index):
-    """Run one closed-loop business cycle."""
+    """Run one closed-loop business cycle without letting one provider block all subsystems."""
     started = now()
-    health_main()
+    health = health_main()
 
-    # Intelligence: discover demand and businesses before spending any outreach budget.
-    opportunities = research_worldwide(limit=RESEARCH_LIMIT)
+    research_error = None
+    try:
+        opportunities = research_worldwide(limit=RESEARCH_LIMIT)
+    except Exception as exc:
+        opportunities = []
+        research_error = f"{type(exc).__name__}: {exc}"
+        (STATE / "operator_provider_error.json").write_text(
+            json.dumps({"at": now(), "stage": "research", "error": research_error}, indent=2),
+            encoding="utf-8",
+        )
+
     intelligence = build_queue()
     discovered = discover(opportunities)
     verified = verify(discovered)
 
-    # Customer acquisition and CRM.
     multi = multichannel(verified)
     leads = acquire_leads(verified)
 
-    # Process inbound events first so STOP/negative/reply states can suppress future actions.
     outcomes = process_replies()
     responses = draft_responses()
-
-    # Outbound is still controlled by OUTBOUND_ENABLED + APPROVED_TO_SEND + provider caps.
     sales = autopilot()
 
-    # Revenue: only confirmed provider events can mark an order PAID.
     payments = reconcile_payments()
     revenue = revenue_loop()
     sm = sales_metrics()
@@ -75,7 +80,8 @@ def cycle(index):
         "cycle": index,
         "started_at": started,
         "finished_at": now(),
-        "research": {"opportunities": len(opportunities)},
+        "health": health,
+        "research": {"opportunities": len(opportunities), "error": research_error},
         "intelligence": intelligence,
         "discovery": {"businesses": len(discovered)},
         "verification": {"leads": len(verified), "with_contacts": sum(bool(x.get("channels")) for x in verified)},
@@ -101,7 +107,7 @@ def main():
 
     report = {
         "operator": "GROWTH_STACK_AUTONOMOUS_REVENUE_OPERATOR",
-        "version": "1.0",
+        "version": "1.1",
         "mission": "discover customers, create value, acquire customers, serve them and convert confirmed payments into fulfillment",
         "autonomy": "bounded",
         "approval_gates": "ENFORCED",
