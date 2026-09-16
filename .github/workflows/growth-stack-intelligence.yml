@@ -45,7 +45,7 @@ jobs:
           MPESA_SHORTCODE: ${{ secrets.MPESA_SHORTCODE }}
           MPESA_PASSKEY: ${{ secrets.MPESA_PASSKEY }}
           MPESA_CALLBACK_URL: ${{ secrets.MPESA_CALLBACK_URL }}
-          MPESA_NUMBER: ${{ secrets.MPESA_NUMBER }}
+          MPESA_NUMBER: ${{ secrets.MPESA_NUMBER || '0746352017' }}
           MAX_SALES_SENDS_PER_RUN: ${{ vars.MAX_SALES_SENDS_PER_RUN || '10' }}
           SALES_SEND_DELAY_SECONDS: ${{ vars.SALES_SEND_DELAY_SECONDS || '5' }}
           MAX_MULTICHANNEL_LEADS: ${{ vars.MAX_MULTICHANNEL_LEADS || '100' }}
@@ -54,9 +54,10 @@ jobs:
           DISCOVERY_RESULTS_PER_QUERY: ${{ vars.DISCOVERY_RESULTS_PER_QUERY || '20' }}
           DISCOVERY_MAX_PAGES_PER_QUERY: ${{ vars.DISCOVERY_MAX_PAGES_PER_QUERY || '8' }}
           DISCOVERY_DELAY_SECONDS: ${{ vars.DISCOVERY_DELAY_SECONDS || '0.5' }}
-          OPERATOR_CYCLES: ${{ vars.OPERATOR_CYCLES || '1' }}
-          OPERATOR_RESEARCH_LIMIT: ${{ vars.OPERATOR_RESEARCH_LIMIT || '250' }}
+          OPERATOR_CYCLES: ${{ vars.OPERATOR_CYCLES || '3' }}
+          OPERATOR_RESEARCH_LIMIT: ${{ vars.OPERATOR_RESEARCH_LIMIT || '500' }}
           OPERATOR_CYCLE_DELAY_SECONDS: ${{ vars.OPERATOR_CYCLE_DELAY_SECONDS || '5' }}
+          MILLION_TARGET_KES: '1000000'
         run: |
           python growth-stack-master/autonomous_operator.py
           python growth-stack-master/followup_engine.py
