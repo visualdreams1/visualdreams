@@ -1,6 +1,7 @@
 """Run the autonomous Growth Stack intelligence and sales pipeline."""
 from __future__ import annotations
 import json
+from autonomous_health import main as health_main
 from live_research import research_worldwide
 from business_discovery import discover
 from contact_verifier import verify
@@ -12,6 +13,7 @@ from monitor import check
 from outcome_engine import process_replies, metrics
 
 def main():
+    health_main()
     opportunities=research_worldwide(limit=250)
     intel=build_queue()
     discovered=discover(opportunities)
