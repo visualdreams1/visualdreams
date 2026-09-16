@@ -10,8 +10,8 @@
   "cycles": [
     {
       "cycle": 1,
-      "started_at": "2026-09-16T08:11:32.957059+00:00",
-      "finished_at": "2026-09-16T08:11:32.966732+00:00",
+      "started_at": "2026-09-16T08:31:53.362280+00:00",
+      "finished_at": "2026-09-16T08:31:53.368724+00:00",
       "health": null,
       "agent_team": {
         "agents": 13,
@@ -154,7 +154,7 @@
       },
       "intelligence": {
         "status": "HEALTHY",
-        "last_run": "2026-09-16T08:11:32.963417+00:00",
+        "last_run": "2026-09-16T08:31:53.367048+00:00",
         "items_analysed": 0,
         "approval_candidates": 0,
         "new_or_changed": 0,
@@ -200,7 +200,7 @@
         "orders": 0,
         "paid": 0,
         "payment_failed": 0,
-        "updated_at": "2026-09-16T08:11:32.965297+00:00"
+        "updated_at": "2026-09-16T08:31:53.368097+00:00"
       },
       "revenue": {
         "actions_added": 0,
@@ -212,11 +212,11 @@
         "engaged": 0,
         "opt_outs": 0,
         "reply_rate": 0,
-        "updated_at": "2026-09-16T08:11:32.965734+00:00"
+        "updated_at": "2026-09-16T08:31:53.368291+00:00"
       },
       "adaptive": {
         "status": "ADAPTIVE_POLICY_UPDATED",
-        "cycles": 7,
+        "cycles": 10,
         "weights": {
           "reply": 1.0,
           "positive": 2.5,
@@ -227,7 +227,7 @@
         }
       },
       "monitor": {
-        "timestamp": "2026-09-16T08:11:32.966428+00:00",
+        "timestamp": "2026-09-16T08:31:53.368582+00:00",
         "status": "HEALTHY",
         "errors": [],
         "warnings": [
@@ -244,8 +244,8 @@
     },
     {
       "cycle": 2,
-      "started_at": "2026-09-16T08:11:37.966876+00:00",
-      "finished_at": "2026-09-16T08:11:37.979100+00:00",
+      "started_at": "2026-09-16T08:31:58.368862+00:00",
+      "finished_at": "2026-09-16T08:31:58.376477+00:00",
       "health": null,
       "agent_team": {
         "agents": 13,
@@ -388,7 +388,7 @@
       },
       "intelligence": {
         "status": "HEALTHY",
-        "last_run": "2026-09-16T08:11:37.974975+00:00",
+        "last_run": "2026-09-16T08:31:58.374449+00:00",
         "items_analysed": 0,
         "approval_candidates": 0,
         "new_or_changed": 0,
@@ -434,7 +434,7 @@
         "orders": 0,
         "paid": 0,
         "payment_failed": 0,
-        "updated_at": "2026-09-16T08:11:37.977498+00:00"
+        "updated_at": "2026-09-16T08:31:58.375567+00:00"
       },
       "revenue": {
         "actions_added": 0,
@@ -446,11 +446,11 @@
         "engaged": 0,
         "opt_outs": 0,
         "reply_rate": 0,
-        "updated_at": "2026-09-16T08:11:37.978091+00:00"
+        "updated_at": "2026-09-16T08:31:58.375821+00:00"
       },
       "adaptive": {
         "status": "ADAPTIVE_POLICY_UPDATED",
-        "cycles": 8,
+        "cycles": 11,
         "weights": {
           "reply": 1.0,
           "positive": 2.5,
@@ -461,7 +461,7 @@
         }
       },
       "monitor": {
-        "timestamp": "2026-09-16T08:11:37.978737+00:00",
+        "timestamp": "2026-09-16T08:31:58.376253+00:00",
         "status": "HEALTHY",
         "errors": [],
         "warnings": [
@@ -478,8 +478,8 @@
     },
     {
       "cycle": 3,
-      "started_at": "2026-09-16T08:11:42.979235+00:00",
-      "finished_at": "2026-09-16T08:11:42.986767+00:00",
+      "started_at": "2026-09-16T08:32:03.376590+00:00",
+      "finished_at": "2026-09-16T08:32:03.382002+00:00",
       "health": null,
       "agent_team": {
         "agents": 13,
@@ -622,7 +622,7 @@
       },
       "intelligence": {
         "status": "HEALTHY",
-        "last_run": "2026-09-16T08:11:42.983790+00:00",
+        "last_run": "2026-09-16T08:32:03.380504+00:00",
         "items_analysed": 0,
         "approval_candidates": 0,
         "new_or_changed": 0,
@@ -668,7 +668,7 @@
         "orders": 0,
         "paid": 0,
         "payment_failed": 0,
-        "updated_at": "2026-09-16T08:11:42.985443+00:00"
+        "updated_at": "2026-09-16T08:32:03.381411+00:00"
       },
       "revenue": {
         "actions_added": 0,
@@ -680,11 +680,11 @@
         "engaged": 0,
         "opt_outs": 0,
         "reply_rate": 0,
-        "updated_at": "2026-09-16T08:11:42.985824+00:00"
+        "updated_at": "2026-09-16T08:32:03.381542+00:00"
       },
       "adaptive": {
         "status": "ADAPTIVE_POLICY_UPDATED",
-        "cycles": 9,
+        "cycles": 12,
         "weights": {
           "reply": 1.0,
           "positive": 2.5,
@@ -695,7 +695,7 @@
         }
       },
       "monitor": {
-        "timestamp": "2026-09-16T08:11:42.986460+00:00",
+        "timestamp": "2026-09-16T08:32:03.381812+00:00",
         "status": "HEALTHY",
         "errors": [],
         "warnings": [
@@ -711,5 +711,5 @@
       }
     }
   ],
-  "finished_at": "2026-09-16T08:11:42.986789+00:00"
+  "finished_at": "2026-09-16T08:32:03.382022+00:00"
 }
