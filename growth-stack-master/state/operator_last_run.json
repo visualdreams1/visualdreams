@@ -10,8 +10,8 @@
   "cycles": [
     {
       "cycle": 1,
-      "started_at": "2026-09-16T08:31:53.362280+00:00",
-      "finished_at": "2026-09-16T08:31:53.368724+00:00",
+      "started_at": "2026-09-16T08:55:08.481817+00:00",
+      "finished_at": "2026-09-16T08:55:08.568238+00:00",
       "health": null,
       "agent_team": {
         "agents": 13,
@@ -150,11 +150,11 @@
       },
       "research": {
         "opportunities": 0,
-        "error": "RuntimeError: TAVILY_API_KEY is not configured"
+        "error": "URLError: <urlopen error [Errno -2] Name or service not known>"
       },
       "intelligence": {
         "status": "HEALTHY",
-        "last_run": "2026-09-16T08:31:53.367048+00:00",
+        "last_run": "2026-09-16T08:55:08.564458+00:00",
         "items_analysed": 0,
         "approval_candidates": 0,
         "new_or_changed": 0,
@@ -200,7 +200,7 @@
         "orders": 0,
         "paid": 0,
         "payment_failed": 0,
-        "updated_at": "2026-09-16T08:31:53.368097+00:00"
+        "updated_at": "2026-09-16T08:55:08.566861+00:00"
       },
       "revenue": {
         "actions_added": 0,
@@ -212,11 +212,11 @@
         "engaged": 0,
         "opt_outs": 0,
         "reply_rate": 0,
-        "updated_at": "2026-09-16T08:31:53.368291+00:00"
+        "updated_at": "2026-09-16T08:55:08.567262+00:00"
       },
       "adaptive": {
         "status": "ADAPTIVE_POLICY_UPDATED",
-        "cycles": 10,
+        "cycles": 13,
         "weights": {
           "reply": 1.0,
           "positive": 2.5,
@@ -227,7 +227,7 @@
         }
       },
       "monitor": {
-        "timestamp": "2026-09-16T08:31:53.368582+00:00",
+        "timestamp": "2026-09-16T08:55:08.567936+00:00",
         "status": "HEALTHY",
         "errors": [],
         "warnings": [
@@ -244,8 +244,8 @@
     },
     {
       "cycle": 2,
-      "started_at": "2026-09-16T08:31:58.368862+00:00",
-      "finished_at": "2026-09-16T08:31:58.376477+00:00",
+      "started_at": "2026-09-16T08:55:13.568385+00:00",
+      "finished_at": "2026-09-16T08:55:13.603194+00:00",
       "health": null,
       "agent_team": {
         "agents": 13,
@@ -384,11 +384,11 @@
       },
       "research": {
         "opportunities": 0,
-        "error": "RuntimeError: TAVILY_API_KEY is not configured"
+        "error": "URLError: <urlopen error [Errno -2] Name or service not known>"
       },
       "intelligence": {
         "status": "HEALTHY",
-        "last_run": "2026-09-16T08:31:58.374449+00:00",
+        "last_run": "2026-09-16T08:55:13.599928+00:00",
         "items_analysed": 0,
         "approval_candidates": 0,
         "new_or_changed": 0,
@@ -434,7 +434,7 @@
         "orders": 0,
         "paid": 0,
         "payment_failed": 0,
-        "updated_at": "2026-09-16T08:31:58.375567+00:00"
+        "updated_at": "2026-09-16T08:55:13.601725+00:00"
       },
       "revenue": {
         "actions_added": 0,
@@ -446,11 +446,11 @@
         "engaged": 0,
         "opt_outs": 0,
         "reply_rate": 0,
-        "updated_at": "2026-09-16T08:31:58.375821+00:00"
+        "updated_at": "2026-09-16T08:55:13.602128+00:00"
       },
       "adaptive": {
         "status": "ADAPTIVE_POLICY_UPDATED",
-        "cycles": 11,
+        "cycles": 14,
         "weights": {
           "reply": 1.0,
           "positive": 2.5,
@@ -461,7 +461,7 @@
         }
       },
       "monitor": {
-        "timestamp": "2026-09-16T08:31:58.376253+00:00",
+        "timestamp": "2026-09-16T08:55:13.602876+00:00",
         "status": "HEALTHY",
         "errors": [],
         "warnings": [
@@ -478,8 +478,8 @@
     },
     {
       "cycle": 3,
-      "started_at": "2026-09-16T08:32:03.376590+00:00",
-      "finished_at": "2026-09-16T08:32:03.382002+00:00",
+      "started_at": "2026-09-16T08:55:18.603347+00:00",
+      "finished_at": "2026-09-16T08:55:18.715113+00:00",
       "health": null,
       "agent_team": {
         "agents": 13,
@@ -618,11 +618,11 @@
       },
       "research": {
         "opportunities": 0,
-        "error": "RuntimeError: TAVILY_API_KEY is not configured"
+        "error": "URLError: <urlopen error [Errno -2] Name or service not known>"
       },
       "intelligence": {
         "status": "HEALTHY",
-        "last_run": "2026-09-16T08:32:03.380504+00:00",
+        "last_run": "2026-09-16T08:55:18.711895+00:00",
         "items_analysed": 0,
         "approval_candidates": 0,
         "new_or_changed": 0,
@@ -668,7 +668,7 @@
         "orders": 0,
         "paid": 0,
         "payment_failed": 0,
-        "updated_at": "2026-09-16T08:32:03.381411+00:00"
+        "updated_at": "2026-09-16T08:55:18.713708+00:00"
       },
       "revenue": {
         "actions_added": 0,
@@ -680,11 +680,11 @@
         "engaged": 0,
         "opt_outs": 0,
         "reply_rate": 0,
-        "updated_at": "2026-09-16T08:32:03.381542+00:00"
+        "updated_at": "2026-09-16T08:55:18.714101+00:00"
       },
       "adaptive": {
         "status": "ADAPTIVE_POLICY_UPDATED",
-        "cycles": 12,
+        "cycles": 15,
         "weights": {
           "reply": 1.0,
           "positive": 2.5,
@@ -695,7 +695,7 @@
         }
       },
       "monitor": {
-        "timestamp": "2026-09-16T08:32:03.381812+00:00",
+        "timestamp": "2026-09-16T08:55:18.714805+00:00",
         "status": "HEALTHY",
         "errors": [],
         "warnings": [
@@ -711,5 +711,5 @@
       }
     }
   ],
-  "finished_at": "2026-09-16T08:32:03.382022+00:00"
+  "finished_at": "2026-09-16T08:55:18.715145+00:00"
 }
