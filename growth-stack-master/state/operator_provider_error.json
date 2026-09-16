@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-16T07:51:04.147950+00:00",
+  "at": "2026-09-16T08:00:21.075859+00:00",
   "stage": "research",
   "error": "RuntimeError: TAVILY_API_KEY is not configured"
 }
