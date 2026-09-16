@@ -25,7 +25,7 @@
     }
   },
   "currency": "KES",
-  "collection_account": "",
+  "collection_account": "0746352017",
   "rule": "only verified provider callbacks can mark an order PAID",
   "connected_count": 0
 }

@@ -10,8 +10,8 @@
   "cycles": [
     {
       "cycle": 1,
-      "started_at": "2026-09-16T08:11:11.170549+00:00",
-      "finished_at": "2026-09-16T08:11:11.179502+00:00",
+      "started_at": "2026-09-16T08:11:32.957059+00:00",
+      "finished_at": "2026-09-16T08:11:32.966732+00:00",
       "health": null,
       "agent_team": {
         "agents": 13,
@@ -144,7 +144,7 @@
           }
         },
         "currency": "KES",
-        "collection_account": "",
+        "collection_account": "0746352017",
         "rule": "only verified provider callbacks can mark an order PAID",
         "connected_count": 0
       },
@@ -154,7 +154,7 @@
       },
       "intelligence": {
         "status": "HEALTHY",
-        "last_run": "2026-09-16T08:11:11.176412+00:00",
+        "last_run": "2026-09-16T08:11:32.963417+00:00",
         "items_analysed": 0,
         "approval_candidates": 0,
         "new_or_changed": 0,
@@ -200,7 +200,7 @@
         "orders": 0,
         "paid": 0,
         "payment_failed": 0,
-        "updated_at": "2026-09-16T08:11:11.178121+00:00"
+        "updated_at": "2026-09-16T08:11:32.965297+00:00"
       },
       "revenue": {
         "actions_added": 0,
@@ -212,11 +212,11 @@
         "engaged": 0,
         "opt_outs": 0,
         "reply_rate": 0,
-        "updated_at": "2026-09-16T08:11:11.178542+00:00"
+        "updated_at": "2026-09-16T08:11:32.965734+00:00"
       },
       "adaptive": {
         "status": "ADAPTIVE_POLICY_UPDATED",
-        "cycles": 6,
+        "cycles": 7,
         "weights": {
           "reply": 1.0,
           "positive": 2.5,
@@ -227,7 +227,475 @@
         }
       },
       "monitor": {
-        "timestamp": "2026-09-16T08:11:11.179205+00:00",
+        "timestamp": "2026-09-16T08:11:32.966428+00:00",
+        "status": "HEALTHY",
+        "errors": [],
+        "warnings": [
+          "Research store not created yet",
+          "Decision queue is empty"
+        ],
+        "checks": {
+          "state_directory": true,
+          "research_store": false,
+          "decision_queue": true,
+          "intelligence_health": true
+        }
+      }
+    },
+    {
+      "cycle": 2,
+      "started_at": "2026-09-16T08:11:37.966876+00:00",
+      "finished_at": "2026-09-16T08:11:37.979100+00:00",
+      "health": null,
+      "agent_team": {
+        "agents": 13,
+        "target_kes": 1000000
+      },
+      "channel_readiness": {
+        "channels": {
+          "whatsapp": {
+            "configured": false,
+            "missing_credentials": [
+              "WHATSAPP_PHONE_NUMBER_ID",
+              "WHATSAPP_ACCESS_TOKEN"
+            ],
+            "mode": "api",
+            "send_enabled": false
+          },
+          "messenger": {
+            "configured": false,
+            "missing_credentials": [
+              "META_PAGE_ACCESS_TOKEN"
+            ],
+            "mode": "api",
+            "send_enabled": false
+          },
+          "instagram": {
+            "configured": false,
+            "missing_credentials": [
+              "META_PAGE_ACCESS_TOKEN"
+            ],
+            "mode": "api",
+            "send_enabled": false
+          },
+          "linkedin": {
+            "configured": false,
+            "missing_credentials": [
+              "LINKEDIN_ACCESS_TOKEN"
+            ],
+            "mode": "approved_api",
+            "send_enabled": false
+          },
+          "x": {
+            "configured": false,
+            "missing_credentials": [
+              "X_API_KEY",
+              "X_API_SECRET",
+              "X_ACCESS_TOKEN",
+              "X_ACCESS_TOKEN_SECRET"
+            ],
+            "mode": "approved_api",
+            "send_enabled": false
+          },
+          "tiktok": {
+            "configured": false,
+            "missing_credentials": [
+              "TIKTOK_ACCESS_TOKEN"
+            ],
+            "mode": "approved_api",
+            "send_enabled": false
+          },
+          "telegram": {
+            "configured": false,
+            "missing_credentials": [
+              "TELEGRAM_BOT_TOKEN"
+            ],
+            "mode": "bot_api",
+            "send_enabled": false
+          },
+          "reddit": {
+            "configured": false,
+            "missing_credentials": [
+              "REDDIT_CLIENT_ID",
+              "REDDIT_CLIENT_SECRET",
+              "REDDIT_REFRESH_TOKEN"
+            ],
+            "mode": "approved_api",
+            "send_enabled": false
+          },
+          "email": {
+            "configured": false,
+            "missing_credentials": [
+              "SMTP_HOST",
+              "SMTP_USERNAME",
+              "SMTP_PASSWORD"
+            ],
+            "mode": "smtp",
+            "send_enabled": false
+          },
+          "website": {
+            "configured": true,
+            "missing_credentials": [],
+            "mode": "webhook",
+            "send_enabled": false
+          },
+          "youtube": {
+            "configured": false,
+            "missing_credentials": [
+              "YOUTUBE_ACCESS_TOKEN"
+            ],
+            "mode": "oauth_publish",
+            "send_enabled": false
+          }
+        },
+        "policy": "authorized_api_only_no_spam_no_bypass",
+        "ready_count": 0
+      },
+      "payment_readiness": {
+        "providers": {
+          "mpesa_daraja": {
+            "configured": false,
+            "missing": [
+              "MPESA_DARAJA_BASE_URL",
+              "MPESA_CONSUMER_KEY",
+              "MPESA_CONSUMER_SECRET",
+              "MPESA_SHORTCODE",
+              "MPESA_PASSKEY"
+            ]
+          },
+          "stripe": {
+            "configured": false,
+            "missing": [
+              "STRIPE_SECRET_KEY"
+            ]
+          },
+          "paypal": {
+            "configured": false,
+            "missing": [
+              "PAYPAL_CLIENT_ID",
+              "PAYPAL_CLIENT_SECRET"
+            ]
+          }
+        },
+        "currency": "KES",
+        "collection_account": "0746352017",
+        "rule": "only verified provider callbacks can mark an order PAID",
+        "connected_count": 0
+      },
+      "research": {
+        "opportunities": 0,
+        "error": "RuntimeError: TAVILY_API_KEY is not configured"
+      },
+      "intelligence": {
+        "status": "HEALTHY",
+        "last_run": "2026-09-16T08:11:37.974975+00:00",
+        "items_analysed": 0,
+        "approval_candidates": 0,
+        "new_or_changed": 0,
+        "ai_enabled": false
+      },
+      "discovery": {
+        "businesses": 0
+      },
+      "verification": {
+        "leads": 0,
+        "with_contacts": 0
+      },
+      "multichannel": {
+        "status": "MULTICHANNEL_INTELLIGENCE_COMPLETE",
+        "leads_processed": 0,
+        "crm_leads": 0,
+        "followups": 0
+      },
+      "lead_acquisition": {
+        "status": "LEAD_ACQUISITION_COMPLETE",
+        "leads": 0,
+        "sales_queue": 0
+      },
+      "offers": {
+        "generated": 0
+      },
+      "outcomes": {
+        "processed": 0,
+        "skipped_duplicates": 0
+      },
+      "responses": {
+        "drafts_added": 0,
+        "queue": 0
+      },
+      "sales": {
+        "outbound_enabled": false,
+        "whatsapp_configured": false,
+        "queued": 0,
+        "attempted_this_run": 0,
+        "accepted_this_run": 0
+      },
+      "payments": {
+        "orders": 0,
+        "paid": 0,
+        "payment_failed": 0,
+        "updated_at": "2026-09-16T08:11:37.977498+00:00"
+      },
+      "revenue": {
+        "actions_added": 0,
+        "queue": 0
+      },
+      "sales_metrics": {
+        "leads": 0,
+        "sent": 0,
+        "engaged": 0,
+        "opt_outs": 0,
+        "reply_rate": 0,
+        "updated_at": "2026-09-16T08:11:37.978091+00:00"
+      },
+      "adaptive": {
+        "status": "ADAPTIVE_POLICY_UPDATED",
+        "cycles": 8,
+        "weights": {
+          "reply": 1.0,
+          "positive": 2.5,
+          "paid": 5.0,
+          "repeat": 7.0,
+          "bounce": -2.0,
+          "negative": -1.5
+        }
+      },
+      "monitor": {
+        "timestamp": "2026-09-16T08:11:37.978737+00:00",
+        "status": "HEALTHY",
+        "errors": [],
+        "warnings": [
+          "Research store not created yet",
+          "Decision queue is empty"
+        ],
+        "checks": {
+          "state_directory": true,
+          "research_store": false,
+          "decision_queue": true,
+          "intelligence_health": true
+        }
+      }
+    },
+    {
+      "cycle": 3,
+      "started_at": "2026-09-16T08:11:42.979235+00:00",
+      "finished_at": "2026-09-16T08:11:42.986767+00:00",
+      "health": null,
+      "agent_team": {
+        "agents": 13,
+        "target_kes": 1000000
+      },
+      "channel_readiness": {
+        "channels": {
+          "whatsapp": {
+            "configured": false,
+            "missing_credentials": [
+              "WHATSAPP_PHONE_NUMBER_ID",
+              "WHATSAPP_ACCESS_TOKEN"
+            ],
+            "mode": "api",
+            "send_enabled": false
+          },
+          "messenger": {
+            "configured": false,
+            "missing_credentials": [
+              "META_PAGE_ACCESS_TOKEN"
+            ],
+            "mode": "api",
+            "send_enabled": false
+          },
+          "instagram": {
+            "configured": false,
+            "missing_credentials": [
+              "META_PAGE_ACCESS_TOKEN"
+            ],
+            "mode": "api",
+            "send_enabled": false
+          },
+          "linkedin": {
+            "configured": false,
+            "missing_credentials": [
+              "LINKEDIN_ACCESS_TOKEN"
+            ],
+            "mode": "approved_api",
+            "send_enabled": false
+          },
+          "x": {
+            "configured": false,
+            "missing_credentials": [
+              "X_API_KEY",
+              "X_API_SECRET",
+              "X_ACCESS_TOKEN",
+              "X_ACCESS_TOKEN_SECRET"
+            ],
+            "mode": "approved_api",
+            "send_enabled": false
+          },
+          "tiktok": {
+            "configured": false,
+            "missing_credentials": [
+              "TIKTOK_ACCESS_TOKEN"
+            ],
+            "mode": "approved_api",
+            "send_enabled": false
+          },
+          "telegram": {
+            "configured": false,
+            "missing_credentials": [
+              "TELEGRAM_BOT_TOKEN"
+            ],
+            "mode": "bot_api",
+            "send_enabled": false
+          },
+          "reddit": {
+            "configured": false,
+            "missing_credentials": [
+              "REDDIT_CLIENT_ID",
+              "REDDIT_CLIENT_SECRET",
+              "REDDIT_REFRESH_TOKEN"
+            ],
+            "mode": "approved_api",
+            "send_enabled": false
+          },
+          "email": {
+            "configured": false,
+            "missing_credentials": [
+              "SMTP_HOST",
+              "SMTP_USERNAME",
+              "SMTP_PASSWORD"
+            ],
+            "mode": "smtp",
+            "send_enabled": false
+          },
+          "website": {
+            "configured": true,
+            "missing_credentials": [],
+            "mode": "webhook",
+            "send_enabled": false
+          },
+          "youtube": {
+            "configured": false,
+            "missing_credentials": [
+              "YOUTUBE_ACCESS_TOKEN"
+            ],
+            "mode": "oauth_publish",
+            "send_enabled": false
+          }
+        },
+        "policy": "authorized_api_only_no_spam_no_bypass",
+        "ready_count": 0
+      },
+      "payment_readiness": {
+        "providers": {
+          "mpesa_daraja": {
+            "configured": false,
+            "missing": [
+              "MPESA_DARAJA_BASE_URL",
+              "MPESA_CONSUMER_KEY",
+              "MPESA_CONSUMER_SECRET",
+              "MPESA_SHORTCODE",
+              "MPESA_PASSKEY"
+            ]
+          },
+          "stripe": {
+            "configured": false,
+            "missing": [
+              "STRIPE_SECRET_KEY"
+            ]
+          },
+          "paypal": {
+            "configured": false,
+            "missing": [
+              "PAYPAL_CLIENT_ID",
+              "PAYPAL_CLIENT_SECRET"
+            ]
+          }
+        },
+        "currency": "KES",
+        "collection_account": "0746352017",
+        "rule": "only verified provider callbacks can mark an order PAID",
+        "connected_count": 0
+      },
+      "research": {
+        "opportunities": 0,
+        "error": "RuntimeError: TAVILY_API_KEY is not configured"
+      },
+      "intelligence": {
+        "status": "HEALTHY",
+        "last_run": "2026-09-16T08:11:42.983790+00:00",
+        "items_analysed": 0,
+        "approval_candidates": 0,
+        "new_or_changed": 0,
+        "ai_enabled": false
+      },
+      "discovery": {
+        "businesses": 0
+      },
+      "verification": {
+        "leads": 0,
+        "with_contacts": 0
+      },
+      "multichannel": {
+        "status": "MULTICHANNEL_INTELLIGENCE_COMPLETE",
+        "leads_processed": 0,
+        "crm_leads": 0,
+        "followups": 0
+      },
+      "lead_acquisition": {
+        "status": "LEAD_ACQUISITION_COMPLETE",
+        "leads": 0,
+        "sales_queue": 0
+      },
+      "offers": {
+        "generated": 0
+      },
+      "outcomes": {
+        "processed": 0,
+        "skipped_duplicates": 0
+      },
+      "responses": {
+        "drafts_added": 0,
+        "queue": 0
+      },
+      "sales": {
+        "outbound_enabled": false,
+        "whatsapp_configured": false,
+        "queued": 0,
+        "attempted_this_run": 0,
+        "accepted_this_run": 0
+      },
+      "payments": {
+        "orders": 0,
+        "paid": 0,
+        "payment_failed": 0,
+        "updated_at": "2026-09-16T08:11:42.985443+00:00"
+      },
+      "revenue": {
+        "actions_added": 0,
+        "queue": 0
+      },
+      "sales_metrics": {
+        "leads": 0,
+        "sent": 0,
+        "engaged": 0,
+        "opt_outs": 0,
+        "reply_rate": 0,
+        "updated_at": "2026-09-16T08:11:42.985824+00:00"
+      },
+      "adaptive": {
+        "status": "ADAPTIVE_POLICY_UPDATED",
+        "cycles": 9,
+        "weights": {
+          "reply": 1.0,
+          "positive": 2.5,
+          "paid": 5.0,
+          "repeat": 7.0,
+          "bounce": -2.0,
+          "negative": -1.5
+        }
+      },
+      "monitor": {
+        "timestamp": "2026-09-16T08:11:42.986460+00:00",
         "status": "HEALTHY",
         "errors": [],
         "warnings": [
@@ -243,5 +711,5 @@
       }
     }
   ],
-  "finished_at": "2026-09-16T08:11:11.179526+00:00"
+  "finished_at": "2026-09-16T08:11:42.986789+00:00"
 }
