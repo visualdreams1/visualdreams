@@ -7,7 +7,9 @@ import json
 import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
+from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qs, urlparse
+from urllib.request import Request, urlopen
 
 from nexus_dashboard import html_page, summary
 
@@ -23,6 +25,34 @@ def valid_signature(body: bytes, signature: str) -> bool:
         return False
     expected = "sha256=" + hmac.new(app_secret.encode(), body, hashlib.sha256).hexdigest()
     return hmac.compare_digest(expected, signature)
+
+
+def cloudflare_status() -> dict:
+    """Validate the Render-injected Cloudflare token without ever returning it."""
+    token = os.getenv("CLOUDFLARE_API_TOKEN", "")
+    if not token:
+        return {"configured": False, "valid": False, "message": "CLOUDFLARE_API_TOKEN is not set"}
+    try:
+        req = Request(
+            "https://api.cloudflare.com/client/v4/user/tokens/verify",
+            headers={"Authorization": f"Bearer {token}", "Accept": "application/json"},
+            method="GET",
+        )
+        with urlopen(req, timeout=10) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+        result = payload.get("result") or {}
+        return {
+            "configured": True,
+            "valid": bool(payload.get("success")),
+            "status": result.get("status"),
+            "message": "Cloudflare token verified" if payload.get("success") else "Cloudflare rejected the token",
+        }
+    except HTTPError as exc:
+        return {"configured": True, "valid": False, "message": f"Cloudflare HTTP {exc.code}"}
+    except URLError:
+        return {"configured": True, "valid": False, "message": "Could not reach Cloudflare"}
+    except Exception:
+        return {"configured": True, "valid": False, "message": "Cloudflare verification failed"}
 
 
 def extract_events(payload: dict) -> list[dict]:
@@ -54,7 +84,14 @@ class Handler(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         if parsed.path == "/health":
             configured = bool(os.getenv("WHATSAPP_WEBHOOK_VERIFY_TOKEN")) and bool(os.getenv("WHATSAPP_APP_SECRET"))
-            self.send_text(200, json.dumps({"status": "ok", "whatsapp_webhook_configured": configured}), "application/json")
+            self.send_text(200, json.dumps({
+                "status": "ok",
+                "whatsapp_webhook_configured": configured,
+                "cloudflare_token_configured": bool(os.getenv("CLOUDFLARE_API_TOKEN")),
+            }), "application/json")
+            return
+        if parsed.path == "/cloudflare/status":
+            self.send_text(200, json.dumps(cloudflare_status()), "application/json")
             return
         if parsed.path == "/api/nexus":
             self.send_text(200, json.dumps(summary(), ensure_ascii=False), "application/json")
