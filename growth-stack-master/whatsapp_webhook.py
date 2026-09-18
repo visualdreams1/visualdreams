@@ -13,6 +13,8 @@ from urllib.request import Request, urlopen
 
 from nexus_dashboard import html_page, summary
 from growth_core import add_lead, create_order, executive_status, products, quote, record_payment
+from mpesa_daraja import configured as mpesa_configured, stk_push
+from whatsapp_cloud import configured as whatsapp_configured, send_text
 
 ROOT = Path(__file__).resolve().parent
 STATE = ROOT / "state"
@@ -92,6 +94,14 @@ class Handler(BaseHTTPRequestHandler):
                 "cloudflare_token_configured": bool(os.getenv("CLOUDFLARE_API_TOKEN")),
             }), "application/json")
             return
+        if parsed.path == "/api/autonomy":
+            self.send_text(200, json.dumps({
+                "mode": "AUTONOMOUS_WHEN_PROVIDERS_ARE_CONFIGURED",
+                "whatsapp": {"configured": whatsapp_configured(), "outbound_enabled": os.getenv("OUTBOUND_ENABLED","false").lower() == "true"},
+                "mpesa": {"configured": mpesa_configured()},
+                "human_escalation": ["refunds","security","sensitive_requests","provider_failures"]
+            }), "application/json")
+            return
         if parsed.path == "/cloudflare/status":
             self.send_text(200, json.dumps(cloudflare_status()), "application/json")
             return
@@ -148,6 +158,49 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_text(400, json.dumps({"error": str(exc)}), "application/json")
             except Exception:
                 self.send_text(500, json.dumps({"error": "request failed"}), "application/json")
+            return
+        if parsed.path == "/mpesa/callback":
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length).decode("utf-8"))
+                callback = payload.get("Body", {}).get("stkCallback", {})
+                metadata = {x.get("Name"): x.get("Value") for x in callback.get("CallbackMetadata", {}).get("Item", [])}
+                result_code = int(callback.get("ResultCode", -1))
+                order_id = str(metadata.get("AccountReference") or callback.get("MerchantRequestID") or "")
+                if order_id:
+                    try:
+                        record_payment(order_id, "PAID" if result_code == 0 else "FAILED")
+                    except ValueError:
+                        pass
+                self.send_text(200, json.dumps({"ResultCode":0,"ResultDesc":"Accepted"}), "application/json")
+            except Exception:
+                self.send_text(200, json.dumps({"ResultCode":0,"ResultDesc":"Accepted"}), "application/json")
+            return
+        if parsed.path == "/api/mpesa/stk":
+            expected = os.getenv("GROWTH_ADMIN_API_KEY","")
+            supplied = self.headers.get("X-Growth-Admin-Key","")
+            if not expected or not supplied or not hmac.compare_digest(expected,supplied):
+                self.send_text(401,"unauthorized"); return
+            try:
+                length=int(self.headers.get("Content-Length","0"))
+                payload=json.loads(self.rfile.read(length).decode("utf-8"))
+                result=stk_push(str(payload.get("phone","")),float(payload.get("amount",0)),str(payload.get("order_id","")))
+                self.send_text(200,json.dumps(result,ensure_ascii=False),"application/json")
+            except Exception as exc:
+                self.send_text(400,json.dumps({"error":str(exc)}),"application/json")
+            return
+        if parsed.path == "/api/whatsapp/send":
+            expected = os.getenv("GROWTH_ADMIN_API_KEY","")
+            supplied = self.headers.get("X-Growth-Admin-Key","")
+            if not expected or not supplied or not hmac.compare_digest(expected,supplied):
+                self.send_text(401,"unauthorized"); return
+            try:
+                length=int(self.headers.get("Content-Length","0"))
+                payload=json.loads(self.rfile.read(length).decode("utf-8"))
+                result=send_text(str(payload.get("to","")),str(payload.get("message","")))
+                self.send_text(200,json.dumps(result,ensure_ascii=False),"application/json")
+            except Exception as exc:
+                self.send_text(400,json.dumps({"error":str(exc)}),"application/json")
             return
         if parsed.path not in {"/", "/webhook"}:
             self.send_text(404, "not found")
