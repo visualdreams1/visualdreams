@@ -146,6 +146,7 @@ def create_order(data: dict) -> dict:
         "market": market,
         "pricing": pricing,
     }
+    order["payment_reference"] = order["order_id"][-10:]
     orders.append(order)
     _write("commercial_orders.json", orders)
     return order
@@ -154,7 +155,7 @@ def record_payment(order_id: str, status: str = "PAID") -> dict:
     orders = _read("commercial_orders.json", [])
     status = status.upper()
     for order in orders:
-        if order.get("order_id") == order_id:
+        if order.get("order_id") == order_id or order.get("payment_reference") == order_id:
             order["payment_status"] = status
             order["status"] = "PAID" if status == "PAID" else "PAYMENT_REVIEW"
             order["payment_updated_at"] = now()
