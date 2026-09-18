@@ -19,9 +19,25 @@ DEFAULT = {
     "max_leads_per_run": int(os.getenv("MAX_LEADS_PER_RUN", "50")),
     "max_followups_per_run": int(os.getenv("MAX_FOLLOWUPS_PER_RUN", "20")),
     "approval_required_for": [
-        "external_outreach", "payment_request", "refund", "money_movement",
-        "contract", "legal_commitment", "sensitive_publication"
+        "refund", "money_movement_out", "contract", "legal_commitment",
+        "sensitive_publication", "security_incident", "policy_violation"
     ],
+    "preauthorized_autonomy": [
+        "research_public_business_data", "score_verified_leads",
+        "send_opted_in_or_policy_compliant_outreach",
+        "respond_to_inbound_messages", "send_buyer_requested_payment_request",
+        "create_order_after_buyer_intent", "confirm_verified_payment",
+        "start_predefined_fulfillment", "send_transactional_followup",
+        "offer_predefined_upsell"
+    ],
+    "hard_limits": {
+        "never_bypass_platform_rules": true,
+        "never_guess_identity_or_contact_data": true,
+        "never_mark_unverified_payment_as_paid": true,
+        "never_spend_money_without_explicit_budget": true,
+        "never_send_sensitive_data": true,
+        "never_continue_after_opt_out": true
+    },
     "weights": {"reply": 1.0, "positive": 2.5, "paid": 5.0, "repeat": 7.0, "bounce": -2.0, "negative": -1.5},
     "updated_at": None,
 }
