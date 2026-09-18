@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-18T13:10:27.188423+00:00",
+  "at": "2026-09-18T13:21:45.576426+00:00",
   "stage": "research",
   "error": "RuntimeError: All configured SearXNG providers failed: HTTPError: HTTP Error 429: Too Many Requests"
 }
