@@ -151,7 +151,7 @@ def create_order(data: dict) -> dict:
     return order
 
 def record_payment(order_id: str, status: str = "PAID") -> dict:
-    orders = _read("orders.json", [])
+    orders = _read("commercial_orders.json", [])
     status = status.upper()
     for order in orders:
         if order.get("order_id") == order_id:
@@ -164,7 +164,7 @@ def record_payment(order_id: str, status: str = "PAID") -> dict:
 
 def executive_status() -> dict:
     leads = _read("leads.json", [])
-    orders = _read("orders.json", [])
+    orders = _read("commercial_orders.json", [])
     paid = [o for o in orders if o.get("payment_status") == "PAID"]
     revenue_kes = sum(
         float(o.get("pricing", {}).get("price", 0))
@@ -185,7 +185,7 @@ def executive_status() -> dict:
         "paid_orders": len(paid),
         "revenue_kes": revenue_kes,
         "revenue_usd": revenue_usd,
-        "whatsapp_connected": False,
-        "payment_provider_connected": False,
-        "next_layer": "Connect channels and payment providers after the core is validated.",
+        "whatsapp_connected": bool(os.getenv("WHATSAPP_PHONE_NUMBER_ID") and os.getenv("WHATSAPP_ACCESS_TOKEN")),
+        "payment_provider_connected": bool(os.getenv("MPESA_CONSUMER_KEY") and os.getenv("MPESA_CONSUMER_SECRET") and os.getenv("MPESA_SHORTCODE") and os.getenv("MPESA_PASSKEY")),
+        "next_layer": "Provider credentials are the remaining activation gate; core automation is ready.",
     }
