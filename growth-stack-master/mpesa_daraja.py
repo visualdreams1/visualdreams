@@ -46,7 +46,7 @@ def stk_push(phone: str, amount: float, account_reference: str) -> dict[str, Any
         "PartyB": os.environ["MPESA_SHORTCODE"],
         "PhoneNumber": digits,
         "CallBackURL": os.getenv("MPESA_CALLBACK_URL","").strip(),
-        "AccountReference": account_reference[:12] or "GROWTHSTACK",
+        "AccountReference": account_reference[-10:] if account_reference else "GROWTHSTACK",
         "TransactionDesc": "Growth Stack payment",
     }
     if not body["CallBackURL"]:
