@@ -1,0 +1,45 @@
+name: Growth Stack Operator
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  operate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: growth-stack-master
+    env:
+      OPERATOR_CYCLES: "1"
+      OPERATOR_RESEARCH_LIMIT: "100"
+      OUTBOUND_ENABLED: "false"
+      MILLION_TARGET_KES: "1000000"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run operator
+        run: python autonomous_operator.py
+
+      - name: Commit updated state
+        working-directory: .
+        run: |
+          git config user.name "Growth Stack Operator"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add growth-stack-master/state growth-stack-master/DECISION_QUEUE.md growth-stack-master/MONITORING_DASHBOARD.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Run Growth Stack operator"
+          git push
