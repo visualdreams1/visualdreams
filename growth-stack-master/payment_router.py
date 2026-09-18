@@ -30,7 +30,7 @@ def readiness():
 
 
 def main():
-    r = {"providers": readiness(), "currency": "KES", "collection_account": os.getenv("MPESA_NUMBER", "0746352017"),
+    r = {"providers": readiness(), "currency": "KES", "collection_account_configured": bool(os.getenv("MPESA_NUMBER")),
          "rule": "only verified provider callbacks can mark an order PAID"}
     r["connected_count"] = sum(x["configured"] for x in r["providers"].values())
     (ROOT / "state" / "payment_readiness.json").write_text(json.dumps(r, indent=2), encoding="utf-8")
