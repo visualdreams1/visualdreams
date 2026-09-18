@@ -83,6 +83,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urlparse(self.path)
+        q = parse_qs(parsed.query)
         if parsed.path == "/health":
             configured = bool(os.getenv("WHATSAPP_WEBHOOK_VERIFY_TOKEN")) and bool(os.getenv("WHATSAPP_APP_SECRET"))
             self.send_text(200, json.dumps({
@@ -117,7 +118,6 @@ class Handler(BaseHTTPRequestHandler):
             self.send_text(200, html_page(summary()), "text/html; charset=utf-8")
             return
 
-        q = parse_qs(parsed.query)
         verify_token = os.getenv("WHATSAPP_WEBHOOK_VERIFY_TOKEN", "")
         if (parsed.path in {"/", "/webhook"} and q.get("hub.mode", [""])[0] == "subscribe"
                 and q.get("hub.verify_token", [""])[0] == verify_token and verify_token):
