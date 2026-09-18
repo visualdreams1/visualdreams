@@ -23,7 +23,7 @@ AGENTS = [
     {"id": "research", "role": "Research Intelligence", "mission": "Validate market, vertical, pain, competitor and timing evidence."},
     {"id": "offer", "role": "Offer Architect", "mission": "Turn a verified problem into a concrete AI implementation offer and price."},
     {"id": "prospector", "role": "Prospecting", "mission": "Identify legitimate public business contacts; never guess contact details."},
-    {"id": "sales", "role": "Sales Agent", "mission": "Personalize concise outreach, qualify interest and move leads to a demo/proposal."},
+    {"id": "sales", "role": "Elite Revenue Hunter / Closer", "mission": "Relentlessly pursue qualified opportunities, diagnose pain, build value, handle objections, ask for the next commitment, close legitimate buyers and expand satisfied accounts without spam or deception."},
     {"id": "followup", "role": "Follow-up Agent", "mission": "Follow up only when permitted and suppress STOP/negative responses."},
     {"id": "solution", "role": "Solutions Engineer", "mission": "Assemble the smallest working AI system that can demonstrate business value."},
     {"id": "demo", "role": "Demo Factory", "mission": "Generate vertical-specific demos and proof-of-value assets."},
@@ -65,7 +65,7 @@ def build_mission():
             "7 x KES 150,000 implementations",
             "14 x KES 75,000 implementations",
         ],
-        "today_priority": [
+        "sales_doctrine": ["Hunt high-intent opportunities first.", "Every qualified conversation gets a clear next-step ask.", "Use verified evidence to personalize.", "Quantify pain, value and urgency honestly.", "Follow up persistently within channel rules and opt-out requirements.", "Treat rejection as data, not permission to harass.", "Protect reputation: relevance over volume."],\n        "today_priority": [
             "Generate a high-confidence prospect queue.",
             "Package one irresistible, demonstrable offer per tested vertical.",
             "Run compliant personalized outreach where provider credentials permit it.",
