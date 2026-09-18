@@ -22,6 +22,7 @@ from agent_team import main as build_agent_team
 from offer_engine import run as build_offers
 from channel_router import main as channel_readiness
 from payment_router import main as payment_readiness
+from autonomy_constitution import load as autonomy_constitution
 
 ROOT = Path(__file__).resolve().parent
 STATE = ROOT / "state"
@@ -34,7 +35,11 @@ def save_run(report):
     (STATE / "operator_last_run.json").write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
 
 def cycle(index):
-    started = now(); health = health_main(); team = build_agent_team()
+    started = now(); constitution = autonomy_constitution()
+    if os.getenv("GROWTH_KILL_SWITCH","false").lower() in {"1","true","yes"}:
+        report = {"cycle": index, "started_at": started, "finished_at": now(), "status": "KILL_SWITCH_ACTIVE", "constitution": constitution["version"]}
+        save_run(report); return report
+    health = health_main(); team = build_agent_team()
     channels = channel_readiness(); payments_ready = payment_readiness(); research_error = None
     try: opportunities = research_worldwide(limit=RESEARCH_LIMIT)
     except Exception as exc:
@@ -60,7 +65,7 @@ def main():
         if i < CYCLE_COUNT: time.sleep(max(0, int(os.getenv("OPERATOR_CYCLE_DELAY_SECONDS", "5"))))
     report = {"operator": "GROWTH_STACK_AUTONOMOUS_REVENUE_OPERATOR", "version": "2.1-multichannel-payments",
               "mission": "discover customers, sell, deliver, reconcile verified payments and learn", "million_target_kes": int(os.getenv("MILLION_TARGET_KES", "1000000")),
-              "autonomy": "bounded", "approval_gates": "ENFORCED", "external_outreach_enabled": os.getenv("OUTBOUND_ENABLED", "false").lower() == "true",
+              "autonomy": "exception_only", "approval_gates": "SAFETY_AND_EXCEPTION_GATES", "constitution_version": "3.0", "external_outreach_enabled": os.getenv("OUTBOUND_ENABLED", "false").lower() == "true",
               "payment_provider_connected": bool(os.getenv("MPESA_DARAJA_BASE_URL") and os.getenv("MPESA_CONSUMER_KEY")), "cycles": reports, "finished_at": now()}
     save_run(report); print(json.dumps(report, indent=2))
 
