@@ -12,6 +12,7 @@ from urllib.parse import parse_qs, urlparse
 from urllib.request import Request, urlopen
 
 from nexus_dashboard import html_page, summary
+from growth_core import add_lead, create_order, executive_status, products, quote, record_payment
 
 ROOT = Path(__file__).resolve().parent
 STATE = ROOT / "state"
@@ -94,7 +95,23 @@ class Handler(BaseHTTPRequestHandler):
             self.send_text(200, json.dumps(cloudflare_status()), "application/json")
             return
         if parsed.path == "/api/nexus":
-            self.send_text(200, json.dumps(summary(), ensure_ascii=False), "application/json")
+            data = summary()
+            data["commercial"] = executive_status()
+            self.send_text(200, json.dumps(data, ensure_ascii=False), "application/json")
+            return
+        if parsed.path == "/api/status":
+            self.send_text(200, json.dumps(executive_status(), ensure_ascii=False), "application/json")
+            return
+        if parsed.path == "/api/products":
+            self.send_text(200, json.dumps({"products": products()}, ensure_ascii=False), "application/json")
+            return
+        if parsed.path == "/api/quote":
+            product_id = q.get("product_id", [""])[0]
+            market = q.get("market", ["KE"])[0]
+            try:
+                self.send_text(200, json.dumps(quote(product_id, market), ensure_ascii=False), "application/json")
+            except ValueError as exc:
+                self.send_text(400, json.dumps({"error": str(exc)}), "application/json")
             return
         if parsed.path in {"/nexus", "/dashboard"}:
             self.send_text(200, html_page(summary()), "text/html; charset=utf-8")
@@ -110,6 +127,28 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urlparse(self.path)
+        admin_paths = {"/api/leads", "/api/orders", "/api/payments"}
+        if parsed.path in admin_paths:
+            expected = os.getenv("GROWTH_ADMIN_API_KEY", "")
+            supplied = self.headers.get("X-Growth-Admin-Key", "")
+            if not expected or not supplied or not hmac.compare_digest(expected, supplied):
+                self.send_text(401, "unauthorized")
+                return
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                payload = json.loads(self.rfile.read(length).decode("utf-8"))
+                if parsed.path == "/api/leads":
+                    result = add_lead(payload)
+                elif parsed.path == "/api/orders":
+                    result = create_order(payload)
+                else:
+                    result = record_payment(payload.get("order_id", ""), payload.get("status", "PAID"))
+                self.send_text(200, json.dumps(result, ensure_ascii=False), "application/json")
+            except ValueError as exc:
+                self.send_text(400, json.dumps({"error": str(exc)}), "application/json")
+            except Exception:
+                self.send_text(500, json.dumps({"error": "request failed"}), "application/json")
+            return
         if parsed.path not in {"/", "/webhook"}:
             self.send_text(404, "not found")
             return
