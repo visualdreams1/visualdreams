@@ -15,6 +15,7 @@ from nexus_dashboard import html_page, summary
 from growth_core import add_lead, create_order, executive_status, products, quote, record_payment
 from mpesa_daraja import configured as mpesa_configured, stk_push
 from whatsapp_cloud import configured as whatsapp_configured, send_text
+from agent_chat import chat as agent_chat
 
 ROOT = Path(__file__).resolve().parent
 STATE = ROOT / "state"
@@ -93,6 +94,13 @@ class Handler(BaseHTTPRequestHandler):
                 "whatsapp_webhook_configured": configured,
                 "cloudflare_token_configured": bool(os.getenv("CLOUDFLARE_API_TOKEN")),
             }), "application/json")
+            return
+        if parsed.path == "/agent":
+            page = """<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Growth Stack Agent OS</title><style>body{font-family:system-ui;max-width:760px;margin:auto;padding:16px;background:#f5f5f5}#log{white-space:pre-wrap;background:white;border-radius:12px;padding:16px;min-height:55vh;overflow:auto}textarea{width:100%;box-sizing:border-box;margin-top:10px;padding:12px;border-radius:10px;border:1px solid #ccc}button{margin-top:8px;padding:12px 20px;border:0;border-radius:10px;font-weight:700}</style></head><body><h2>Growth Stack Agent OS</h2><div id="log">Agent OS online. Ask me about the company, customers, offers, system status or next actions.\\n</div><textarea id="m" rows="3" placeholder="Talk to Growth Stack..."></textarea><button onclick="send()">Send</button><script>let h=[];async function send(){let m=document.getElementById('m').value.trim();if(!m)return;let l=document.getElementById('log');l.textContent+='\\nYOU: '+m+'\\n';document.getElementById('m').value='';let r=await fetch('/api/agent/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:m,history:h})});let j=await r.json();l.textContent+='AGENT: '+(j.reply||j.error||'No response')+'\\n';h.push({role:'user',content:m},{role:'assistant',content:j.reply||''});}</script></body></html>""";
+            self.send_text(200, page, "text/html; charset=utf-8")
+            return
+        if parsed.path == "/api/agent/status":
+            self.send_text(200, json.dumps({"online":True,"autonomy":"exception_only","llm_configured":bool(os.getenv("OPENAI_API_KEY")),"model":os.getenv("GROWTH_AGENT_MODEL",os.getenv("OPENAI_MODEL","gpt-5.6"))}), "application/json")
             return
         if parsed.path == "/api/autonomy":
             self.send_text(200, json.dumps({
@@ -188,6 +196,17 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_text(200,json.dumps(result,ensure_ascii=False),"application/json")
             except Exception as exc:
                 self.send_text(400,json.dumps({"error":str(exc)}),"application/json")
+            return
+        if parsed.path == "/api/agent/chat":
+            try:
+                length=int(self.headers.get("Content-Length","0"))
+                payload=json.loads(self.rfile.read(length).decode("utf-8"))
+                result=agent_chat(str(payload.get("message","")), payload.get("history") or [])
+                self.send_text(200,json.dumps(result,ensure_ascii=False),"application/json")
+            except ValueError as exc:
+                self.send_text(400,json.dumps({"error":str(exc)}),"application/json")
+            except Exception:
+                self.send_text(500,json.dumps({"error":"agent request failed"}),"application/json")
             return
         if parsed.path == "/api/whatsapp/send":
             expected = os.getenv("GROWTH_ADMIN_API_KEY","")
