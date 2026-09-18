@@ -159,7 +159,7 @@ def record_payment(order_id: str, status: str = "PAID") -> dict:
             order["payment_status"] = status
             order["status"] = "PAID" if status == "PAID" else "PAYMENT_REVIEW"
             order["payment_updated_at"] = now()
-            _write("orders.json", orders)
+            _write("commercial_orders.json", orders)
             return order
     raise ValueError("Order not found")
 
