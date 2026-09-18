@@ -12,6 +12,7 @@ from urllib.error import HTTPError, URLError
 
 ROOT=Path(__file__).resolve().parent
 STATE=ROOT/"state"; STATE.mkdir(exist_ok=True)
+from social_access_policy import status as social_status
 
 SYSTEM_PROMPT="""You are the Growth Stack Agent OS, the autonomous commercial operating system for Growth Stack Global.
 Owner: Dennis Achege.
@@ -39,6 +40,7 @@ def status():
         "channels": read("channel_readiness.json", {}),
         "policy": read("operator_policy.json", {}),
         "autonomy": "exception_only",
+        "social_access": social_status(),
     }
 
 def local_reply(message):
