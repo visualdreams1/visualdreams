@@ -135,7 +135,7 @@ def create_order(data: dict) -> dict:
     if not product_id or not customer:
         raise ValueError("product_id and customer are required")
     pricing = quote(product_id, market)
-    orders = _read("orders.json", [])
+    orders = _read("commercial_orders.json", [])
     order = {
         "order_id": "GS-" + secrets.token_hex(6),
         "created_at": now(),
@@ -147,7 +147,7 @@ def create_order(data: dict) -> dict:
         "pricing": pricing,
     }
     orders.append(order)
-    _write("orders.json", orders)
+    _write("commercial_orders.json", orders)
     return order
 
 def record_payment(order_id: str, status: str = "PAID") -> dict:
