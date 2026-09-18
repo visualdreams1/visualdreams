@@ -9,6 +9,7 @@ import json
 import os
 from datetime import datetime, timezone
 from pathlib import Path
+from growth_core import executive_status
 
 ROOT = Path(__file__).resolve().parent
 STATE = ROOT / "state"
@@ -25,6 +26,7 @@ def load(name: str, default):
 def summary() -> dict:
     operator = load("operator_last_run.json", {})
     health = load("health.json", {})
+    commercial = executive_status()
     channels = load("channel_readiness.json", {})
     leads = load("leads.json", [])
     sales_queue = load("sales_queue.json", [])
@@ -58,6 +60,9 @@ def summary() -> dict:
         "manual_mpesa": os.getenv("MPESA_NUMBER", "0746352017"),
         "research_error": research.get("error"),
         "warnings": health.get("warnings", []),
+        "commercial": commercial,
+        "revenue_kes": commercial.get("revenue_kes", 0),
+        "revenue_usd": commercial.get("revenue_usd", 0),
     }
 
 
@@ -66,7 +71,8 @@ def html_page(data: dict) -> str:
     esc = lambda value: html.escape(str(value))
     cards = [("Status", data["status"]), ("Global opportunities", data["research_opportunities"]),
              ("Businesses", data["discovered_businesses"]), ("Qualified leads", data["verified_leads"]),
-             ("Sales queue", data["sales_queue"]), ("Paid orders", data["paid_orders"])]
+             ("Sales queue", data["sales_queue"]), ("Paid orders", data["paid_orders"]),
+             ("KES revenue", data["revenue_kes"]), ("USD revenue", data["revenue_usd"])]
     card_html = "".join(f'<div class="card"><span>{esc(k)}</span><strong>{esc(v)}</strong></div>' for k, v in cards)
     channels = ", ".join(data["ready_channels"]) if data["ready_channels"] else "None connected"
     error = f'<div class="warning">Research: {esc(data["research_error"])}</div>' if data.get("research_error") else ""
